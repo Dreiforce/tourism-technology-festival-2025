@@ -1,3 +1,4 @@
+import argparse
 from datetime import datetime
 
 import matplotlib.pyplot as plt
@@ -6,10 +7,15 @@ import xarray
 from dateutil.relativedelta import relativedelta
 
 if __name__ == "__main__":
-    #west = sys.argv[1]
-    #south = sys.argv[2]
-    #east = sys.argv[3]
-    #north = sys.argv[4]
+
+
+    parser = argparse.ArgumentParser(description="Simple calculator.")
+    parser.add_argument('west', type=float)
+    parser.add_argument('south', type=float)
+    parser.add_argument('east', type=float)
+    parser.add_argument('north', type=float)
+
+    args = parser.parse_args()
 
     conn = openeo.connect("openeo.dataspace.copernicus.eu")
     conn.authenticate_oidc()
@@ -27,8 +33,8 @@ if __name__ == "__main__":
         print(current.strftime("%Y-%m-%d"))
         current += step
 
-        bbox = {"west": 27.564697, "south": 34.764179, "east": 33.002930, "north": 37.387617}
-
+        #bbox = {"west": 27.564697, "south": 34.764179, "east": 33.002930, "north": 37.387617}
+        bbox = {"west": args.west, "south": args.south, "east": args.east, "north": args.north}
         sentinel3 = conn.load_collection(
             "SENTINEL3_OLCI_L1B",
             spatial_extent=bbox,
@@ -55,5 +61,5 @@ if __name__ == "__main__":
         plt.subplots_adjust(left=0, right=1, top=1, bottom=0)
 
         # Save the clean image
-        plt.savefig(f"processing/satellite_images/{current}.png", dpi=300, bbox_inches='tight', pad_inches=0)
+        plt.savefig(f"satellite_images/{current}.png", dpi=300, bbox_inches='tight', pad_inches=0)
         plt.close(fig)
