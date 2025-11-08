@@ -1,14 +1,14 @@
 import { useState, useMemo } from "react";
 import SearchBar from "@/components/SearchBar";
 import SearchResult from "@/components/SearchResult";
-import tours from "@/data/Tours.json";
+import tours from "@/data/filtered.json";
 import { FileSearch } from "lucide-react";
 
 interface DataItem {
   id: number;
   title: string;
   city: string;
-  district: string;
+  Country: string;
 }
 
 const Index = () => {
@@ -32,10 +32,10 @@ const Index = () => {
             <FileSearch className="w-8 h-8 text-primary" />
           </div>
           <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-primary via-primary to-accent-foreground bg-clip-text text-transparent">
-            Search Library
+            Tour Search
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Find what you're looking for in our curated collection
+            Find the tour you're looking for
           </p>
         </header>
 
@@ -58,8 +58,7 @@ const Index = () => {
                   <SearchResult
                     key={item.id}
                     title={item.title}
-                    description={item.description}
-                    category={item.category}
+                    category={item.city}
                     index={index}
                   />
                 ))}
