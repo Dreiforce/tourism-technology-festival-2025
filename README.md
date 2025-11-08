@@ -8,16 +8,26 @@ This repository contains the source code, documentation, and all relevant materi
 
 ## 🚀 Project Overview
 
-- TODO
+1. Preprocessing (python)
+2. Search (react)
+3. Fetching satellite data (python)
+4. Processing data (python)
+5. Visualisation (react)
 
 ---
 
 ## 📦 Repository Structure
 
-├── src/           # Source code
-├── presentation/  # Presentation
-├── .github/       # Community health files (issues, pull requests)
-└── README.md      # Project description
+```
+├── src/                # Source code
+├────── preprocesing/   # 1. Preprocessing of data
+├────── search/         # 2. React app for search
+├────── processing/     # 3. & 4. Fechting and processing of satellite data
+├────── visualisation/  # 5. Visualisation of data
+├── presentation/       # Presentation
+├── .github/            # Community health files (issues, pull requests)
+└── README.md           # Project description
+```
 
 ---
 
@@ -28,18 +38,26 @@ This repository contains the source code, documentation, and all relevant materi
     git clone https://github.com/Dreiforce/tourism-technology-festival-2025.git
     cd tourism-technology-festival-2025
     ```
-2. **Install dependencies**  
+2. **Download and preprocess data**
+
+    Go to https://hub.austria.info/connections/104c5a26-2f36-4716-b25c-0d16af31a0bd
+    
+    Download and save to `preprocessing/Tours.json`
+
+    ```bash
+     python preprocessing/filter.py
+     ```
+2. **Install frontend dependencies**  
    ```bash
+    cd search
     npm install
     ```
 3. **Run the project**
     ```bash
-    # Depending on your setup, for example:
-    npm run start
+    npm run dev
     ```
 4. **View the demo**  
-   Open the browser and go to `localhost:4200`
-
+   Open the browser and go to `localhost:8080`
 ---
 
 ## 👥 Contributors
