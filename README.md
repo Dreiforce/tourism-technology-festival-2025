@@ -48,6 +48,7 @@ This repository contains the source code, documentation, and all relevant materi
 - [Simon Lehner-Dittenberger](https://github.com/MightyDuckD) – Backend Development
 - [Lukas Wallenböck](https://github.com/fireplanet) – Frontend Development
 - [Burcu Taspinar](https://github.com/btaspinar) - Data Scientist
+- [Stefan H](https://github.com/stefhol) - User Relations
 
 ---
 
