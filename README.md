@@ -44,7 +44,7 @@ This repository contains the source code, documentation, and all relevant materi
 
 ## 👥 Contributors
 
-- [Jakob Geringer](https://github.com/KingPao) – User Experience & Design
+- [Jakob Geringer](https://github.com/KingPao) – AI Experts
 - [Simon Lehner-Dittenberger](https://github.com/MightyDuckD) – Backend Development
 - [Lukas Wallenböck](https://github.com/fireplanet) – Frontend Development
 - [Burcu Taspinar](https://github.com/btaspinar) - Data Scientist
