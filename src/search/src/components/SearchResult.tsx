@@ -2,25 +2,17 @@ import {Card, CardHeader, CardTitle} from "@/components/ui/card";
 import {Badge} from "@/components/ui/badge";
 
 interface SearchResultProps {
-    id: string;
+    id: number;
     title: string;
     city: string;
     index: number;
+    onClick: (id: number) => void;
 }
 
-const SearchResult = ({id, title, city, index}: SearchResultProps) => {
-    debugger;
-    const handleClick = async () => {
-        try {
-            const response = await fetch(`http://localhost:3000/api/find/?id=${id}`);
-        } catch (error) {
-            console.error('API request failed:', error);
-        }
-    };
-
+const SearchResult = ({id, title, city, index, onClick}: SearchResultProps) => {
     return (
         <Card
-            onClick={handleClick}
+            onClick={() => onClick(id)}
             tabIndex={0}
             role="button"
             className="cursor-pointer hover:shadow-lg transition-all duration-300 hover:-translate-y-1 border-2 animate-in fade-in slide-in-from-bottom-4"

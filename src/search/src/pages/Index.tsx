@@ -1,7 +1,8 @@
-import {useMemo, useState} from "react";
+import React, {useMemo, useState} from "react";
 import SearchBar from "@/components/SearchBar";
 import SearchResult from "@/components/SearchResult";
 import tours from "@/data/filtered.json";
+import LoadingSpinner from "@/components/LoadingSpinner";
 import {FileSearch} from "lucide-react";
 
 interface DataItem {
@@ -13,19 +14,35 @@ interface DataItem {
 
 const Index = () => {
     const [searchQuery, setSearchQuery] = useState("");
+    const [loading, setLoading] = useState(false);
 
     const filteredResults = useMemo(() => {
         if (!searchQuery.trim()) {
             return tours;
         }
-
         return tours.filter((item: DataItem) =>
             item.title.toLowerCase().includes(searchQuery.toLowerCase())
         );
     }, [searchQuery]);
 
+    const handleResultClick = async (id: number) => {
+        setLoading(true);
+        try {
+            await fetch(`http://localhost:3000/api/find/?id=${id}`);
+            setTimeout(() => {
+                setLoading(false);
+            }, 800);
+        } catch (error) {
+            console.error('API request failed:', error);
+            setTimeout(() => {
+                //setLoading(false);
+            }, 800);
+        }
+    };
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/20">
+            {loading && <LoadingSpinner gifUrl="/loading.gif"/>}
             <div className="container mx-auto px-4 py-12 md:py-20">
                 <header className="text-center mb-12 animate-in fade-in slide-in-from-top duration-500">
                     <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10 mb-6">
@@ -58,10 +75,12 @@ const Index = () => {
                             <div className="grid gap-4">
                                 {filteredResults.map((item: DataItem, index: number) => (
                                     <SearchResult
+                                        key={item.id}
                                         id={item.id}
                                         title={item.title}
                                         city={item.city}
                                         index={index}
+                                        onClick={handleResultClick}
                                     />
                                 ))}
                             </div>
