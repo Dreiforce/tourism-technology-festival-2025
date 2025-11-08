@@ -1,0 +1,62 @@
+[
+  {
+    "id": 1,
+    "title": "Introduction to React",
+    "description": "Learn the fundamentals of React and build modern web applications",
+    "category": "Web Development"
+  },
+  {
+    "id": 2,
+    "title": "Advanced TypeScript Patterns",
+    "description": "Master advanced TypeScript features and design patterns",
+    "category": "Programming"
+  },
+  {
+    "id": 3,
+    "title": "UI/UX Design Principles",
+    "description": "Create beautiful and intuitive user interfaces",
+    "category": "Design"
+  },
+  {
+    "id": 4,
+    "title": "Node.js Backend Development",
+    "description": "Build scalable server-side applications with Node.js",
+    "category": "Backend"
+  },
+  {
+    "id": 5,
+    "title": "Data Structures and Algorithms",
+    "description": "Essential computer science concepts for every developer",
+    "category": "Computer Science"
+  },
+  {
+    "id": 6,
+    "title": "Modern CSS Techniques",
+    "description": "Master CSS Grid, Flexbox, and modern styling approaches",
+    "category": "Web Development"
+  },
+  {
+    "id": 7,
+    "title": "API Design Best Practices",
+    "description": "Design robust and maintainable RESTful APIs",
+    "category": "Backend"
+  },
+  {
+    "id": 8,
+    "title": "React Performance Optimization",
+    "description": "Optimize your React applications for maximum performance",
+    "category": "Web Development"
+  },
+  {
+    "id": 9,
+    "title": "Database Design Fundamentals",
+    "description": "Learn how to design efficient and scalable databases",
+    "category": "Backend"
+  },
+  {
+    "id": 10,
+    "title": "Responsive Web Design",
+    "description": "Create websites that work beautifully on all devices",
+    "category": "Design"
+  }
+]
