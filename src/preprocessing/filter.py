@@ -14,5 +14,5 @@ filtered = [
     if (item.get("County") == "Tirol" and item.get("city") != "")
 ]
 
-with open('../src/search/src/data/filtered.json', 'w') as out_f:
+with open('../search/src/data/filtered.json', 'w') as out_f:
     json.dump(filtered, out_f, indent=2)
