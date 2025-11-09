@@ -1,0 +1,82 @@
+import { useEffect, useRef } from "react"
+import Terrain from "./assets/terrain_demo.png"
+
+export const Background = () => {
+  const canvas = useRef<null | HTMLCanvasElement>(null)
+  useEffect(() => {
+    if(canvas.current == null){
+      return;
+    }
+  getTileFromTilemap(canvas.current, Terrain) // Get tile at column 1, row 2
+      .then((_tileCanvas) => {
+        console.log("hi")
+      })
+      .catch((error) => {
+          console.error('Error getting tile:', error);
+      });
+
+  },[])
+
+  return <canvas style={{"width": 100, "height": 100}} ref={canvas}/>
+
+}
+function getTileFromTilemap(
+    tileCanvas:HTMLCanvasElement,
+    tilemapImagePath:string,
+) {
+    return new Promise((resolve, reject) => {
+        const tilemapImage = new Image();
+        tilemapImage.src = tilemapImagePath;
+
+        tilemapImage.onload = () => {
+            const tileContext = tileCanvas.getContext('2d');
+
+            if(tileContext == null){
+              reject()
+              return;
+            }
+
+            tileContext.drawImage(
+                tilemapImage,
+                0,
+                0,
+                tileCanvas.width,
+                tileCanvas.height,
+                0,
+                0,
+                tileCanvas.width,
+                tileCanvas.height,
+            );
+              const imageData = tileContext.getImageData(0, 0, tileCanvas.width, tileCanvas.height);
+            const r = []
+            const g = []
+            const b = []
+            const a = []
+            for (let index = 0; index < imageData.data.length; index++) {
+              const element = imageData.data[index];
+              const modulo = index % 4;
+              if(modulo === 0){
+                r.push(element)
+              }
+              if(modulo === 1){
+                g.push(element)
+              }
+              
+              if(modulo === 2){
+                b.push(element)
+              }
+              if(modulo === 3){
+                a.push(element)
+              }
+            }
+            resolve(transpose([r,g,b,a])); // You can resolve with the canvas or its dataURL
+        };
+
+        tilemapImage.onerror = () => {
+            reject(new Error('Failed to load tilemap image.'));
+        };
+    });
+}
+function transpose(matrix:number[][]) {
+  return matrix[0].map((_col, i) => matrix.map(row => row[i]));
+}
