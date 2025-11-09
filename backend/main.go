@@ -40,6 +40,53 @@ type Point struct {
   Y float64
 }
 
+func extract_svg(id, pngfile string) {
+    grepCmd := exec.Command("python", "../pipeline_colors/extract.py",
+    pngfile)
+  const venv = "../.venv"
+
+//grepCmd.Dir =  filepath.Join(".", "datadir", id)
+    grepCmd.Env = append(os.Environ(),
+        // these were the only ones i could see changing on 'activation'
+        "VIRTUAL_ENV=" + venv,
+        //"OPENEO_CONFIG_HOME=/home/simon/Projects/hackathon2025/tourism-technology-festival-2025/processing/openeo",
+    )
+
+    grepIn, _ := grepCmd.StdinPipe()
+    grepOut, _ := grepCmd.StdoutPipe()
+    grepErr, _ := grepCmd.StderrPipe()
+    grepCmd.Start()
+    grepIn.Write([]byte("hello grep\ngoodbye grep"))
+    grepIn.Close()
+    grepBytes, _ := io.ReadAll(grepOut)
+    grepBytesErr, _ := io.ReadAll(grepErr)
+
+
+    if err := grepCmd.Wait(); err != nil {
+        if exiterr, ok := err.(*exec.ExitError); ok {
+            log.Printf("Exit Status: %d", exiterr.ExitCode())
+        } else {
+            log.Fatalf("cmd.Wait: %v", err)
+        }
+    }
+
+    println("output of command" + string(grepBytes))
+    println("output of command" + string(grepBytesErr))
+
+
+}
+
+func readdir_ext(id, dir string) {
+
+    items, _ := os.ReadDir(dir)
+    for _, item := range items {
+    if(!item.IsDir() && strings.HasSuffix(item.Name(), ".png")) {
+        extract_svg(id, filepath.Join(dir, item.Name()))
+    }
+    }
+
+}
+
 
 func (b Point) String() string {
         return fmt.Sprintf("[%f %f]", b.X, b.Y)
@@ -155,6 +202,7 @@ func findit(w http.ResponseWriter, req *http.Request)  {
                 })
             }
         extract(id, points)
+        readdir_ext(id, filepath.Join(".","datadir",id,"satellite_images"))
 
             var res2 = map[string]string {
                 "test": payload.Rows[i].Geo.Geometry.Value,
