@@ -1,9 +1,9 @@
-import React, {useMemo, useState} from "react";
+import {useMemo, useState} from "react";
+import {useNavigate} from "react-router-dom";
 import SearchBar from "@/components/SearchBar";
 import SearchResult from "@/components/SearchResult";
 import tours from "@/data/filtered.json";
 import LoadingSpinner from "@/components/LoadingSpinner";
-import {FileSearch} from "lucide-react";
 
 interface DataItem {
     id: number;
@@ -15,28 +15,47 @@ interface DataItem {
 const Index = () => {
     const [searchQuery, setSearchQuery] = useState("");
     const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
 
     const filteredResults = useMemo(() => {
-        if (!searchQuery.trim()) {
-            return tours;
-        }
+        if (!searchQuery.trim()) return tours;
         return tours.filter((item: DataItem) =>
             item.title.toLowerCase().includes(searchQuery.toLowerCase())
         );
     }, [searchQuery]);
 
-    const handleResultClick = async (id: number) => {
+    // Index.tsx
+    const handleResultClick = async (id: number, title: string) => {
         setLoading(true);
         try {
-            await fetch(`http://localhost:3000/api/find/?id=${id}`);
-            setTimeout(() => {
+            //const response = await fetch(`http://localhost:3000/api/find/?id=${id}`);
+            const response = await fetch('example.json');
+            const data = await response.json();
+
+            if (data && Array.isArray(data.path)) {
+                const path = data.path.map((point: any) => ({
+                    lat: point.y,
+                    lng: point.x
+                }));
+                setTimeout(() => {
+                    setLoading(false);
+                    navigate(`/trail/${id}`, {
+                        state: {
+                            trailPath: path,
+                            trailName: title,
+                            trees: data.trees,
+                            treeColors: data.tree_colors,
+                            colors: data.colors
+                        }
+                    });
+                }, 5000);
+            } else {
                 setLoading(false);
-            }, 800);
+                console.error("No trail path found.");
+            }
         } catch (error) {
-            console.error('API request failed:', error);
-            setTimeout(() => {
-                //setLoading(false);
-            }, 800);
+            //setLoading(false);
+            console.error("Something went wrong.");
         }
     };
 
@@ -45,9 +64,6 @@ const Index = () => {
             {loading && <LoadingSpinner gifUrl="/loading.gif"/>}
             <div className="container mx-auto px-4 py-12 md:py-20">
                 <header className="text-center mb-12 animate-in fade-in slide-in-from-top duration-500">
-                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10 mb-6">
-                        <FileSearch className="w-8 h-8 text-primary"/>
-                    </div>
                     <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-primary via-primary to-accent-foreground bg-clip-text text-transparent">
                         Tour Search
                     </h1>
@@ -59,19 +75,9 @@ const Index = () => {
                 <div className="flex justify-center mb-12 animate-in fade-in slide-in-from-top duration-700">
                     <SearchBar value={searchQuery} onChange={setSearchQuery}/>
                 </div>
-
                 <div className="max-w-4xl mx-auto">
                     {filteredResults.length > 0 ? (
                         <>
-                            <div className="mb-6 text-sm text-muted-foreground animate-in fade-in duration-500">
-                                {searchQuery && (
-                                    <p>
-                                        Found <span
-                                        className="font-semibold text-foreground">{filteredResults.length}</span> result{filteredResults.length !== 1 ? 's' : ''} for
-                                        "{searchQuery}"
-                                    </p>
-                                )}
-                            </div>
                             <div className="grid gap-4">
                                 {filteredResults.map((item: DataItem, index: number) => (
                                     <SearchResult
@@ -80,22 +86,13 @@ const Index = () => {
                                         title={item.title}
                                         city={item.city}
                                         index={index}
-                                        onClick={handleResultClick}
+                                        onClick={() => handleResultClick(item.id, item.title)}
                                     />
                                 ))}
                             </div>
                         </>
                     ) : (
-                        <div className="text-center py-16 animate-in fade-in duration-500">
-                            <div
-                                className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-muted mb-6">
-                                <FileSearch className="w-10 h-10 text-muted-foreground"/>
-                            </div>
-                            <h3 className="text-2xl font-semibold mb-2">No results found</h3>
-                            <p className="text-muted-foreground">
-                                Try adjusting your search query
-                            </p>
-                        </div>
+                        <div className="text-center py-16 animate-in fade-in duration-500">{/* ... */}</div>
                     )}
                 </div>
             </div>
