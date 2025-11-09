@@ -5,8 +5,7 @@ https://tourism-technology.com/
 ## Waldblick 🌳
 
 <img src="logo.gif" width="50" height="50"/>
-
-![app](app.gif)
+<img src="app.gif"/>
 
 Welcome to our submission to the **Tourism Technology Festival 2025**!  
 This repository contains the source code, documentation, and all relevant materials for our innovative tourism
