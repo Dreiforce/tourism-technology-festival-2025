@@ -4,6 +4,8 @@ from datetime import datetime
 import matplotlib.pyplot as plt
 import openeo
 import xarray
+import time
+import os.path
 from dateutil.relativedelta import relativedelta
 
 if __name__ == "__main__":
@@ -33,6 +35,12 @@ if __name__ == "__main__":
         print(current.strftime("%Y-%m-%d"))
         current += step
 
+
+        if os.path.isfile(f"satellite_images/{current}.png"):
+            continue
+
+
+
         #bbox = {"west": 27.564697, "south": 34.764179, "east": 33.002930, "north": 37.387617}
         bbox = {"west": args.west, "south": args.south, "east": args.east, "north": args.north}
         sentinel3 = conn.load_collection(
@@ -42,6 +50,7 @@ if __name__ == "__main__":
             bands=["B08", "B06", "B04"],
         )
 
+        time.sleep(3)
         sentinel3.download("sentinel3.nc")
 
         ds = xarray.load_dataset("sentinel3.nc")

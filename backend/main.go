@@ -7,7 +7,9 @@ import (
 	"encoding/json"
 	"strings"
 	"fmt"
+	"io"
 	"io/ioutil"
+	"os"
 	"strconv"
     "os/exec"
 
@@ -44,15 +46,50 @@ func (b Point) String() string {
 }
 
 
-func exxtract (leftTop, rightBottom Point){
+func Exxtract (leftTop, rightBottom Point){
 println("running extraction with " + leftTop.String() + " "+ rightBottom.String())
+fmt.Println("Say hi")
+
+    grepCmd := exec.Command("python", "../processing/Sentinel_3.py",
+     fmt.Sprintf("%f", leftTop.X),
+    fmt.Sprintf("%f", rightBottom.X),
+    fmt.Sprintf("%f", leftTop.Y),
+    fmt.Sprintf("%f", rightBottom.Y))
+  const venv = "../.venv"
+
+    grepCmd.Env = append(os.Environ(),
+        // these were the only ones i could see changing on 'activation'
+        "VIRTUAL_ENV=" + venv,
+        "OPENEO_CONFIG_HOME=/home/simon/Projects/hackathon2025/tourism-technology-festival-2025/processing/openeo",
+    )
+
+    grepIn, _ := grepCmd.StdinPipe()
+    grepOut, _ := grepCmd.StdoutPipe()
+    grepErr, _ := grepCmd.StderrPipe()
+    grepCmd.Start()
+    grepIn.Write([]byte("hello grep\ngoodbye grep"))
+    grepIn.Close()
+    grepBytes, _ := io.ReadAll(grepOut)
+    grepBytesErr, _ := io.ReadAll(grepErr)
+
+
+    if err := grepCmd.Wait(); err != nil {
+        if exiterr, ok := err.(*exec.ExitError); ok {
+            log.Printf("Exit Status: %d", exiterr.ExitCode())
+        } else {
+            log.Fatalf("cmd.Wait: %v", err)
+        }
+    }
+
+    println("output of command" + string(grepBytes))
+    println("output of command" + string(grepBytesErr))
 }
 
 func extract(coords []Point) {
 
-    minX := 1.0 * (2^20)
+    minX := 120000.0
      maxX := 0.0
-    minY := 1.0 * (2^20) //TODO: large number max float etc
+    minY := 2000000.0 //TODO: large number max float etc
     maxY := 0.0
 
     for i := range coords {
@@ -63,7 +100,7 @@ func extract(coords []Point) {
     }
 
 
-    exxtract(Point{
+    Exxtract(Point{
           X: minX, Y: minY,
     }, Point{X: maxX, Y: maxY })
 }
