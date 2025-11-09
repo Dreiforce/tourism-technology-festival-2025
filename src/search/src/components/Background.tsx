@@ -1,10 +1,10 @@
 import {useEffect, useRef} from "react"
-import Terrain from "./assets/beispiel_bild.png"
-import Plants from './assets/Plants.png'
-import Rock from './assets/Rock1.png'
-import Summer from './assets/laub_anim/Summer.png'
-import Gras from './assets/terrain/gras.png'
-import Dirt from './assets/terrain/dirt.png'
+import Terrain from "../assets/beispiel_bild.png"
+import Plants from '../assets/Plants.png'
+import Rock from '../assets/Rock1.png'
+import Summer from '../assets/laub_anim/Summer.png'
+import Gras from '../assets/terrain/gras.png'
+import Dirt from '../assets/terrain/dirt.png'
 
 export const Background = (props: { column: number }) => {
     const canvas = useRef<null | HTMLCanvasElement>(null)
