@@ -1,8 +1,10 @@
 import {  useEffect, useMemo, useRef } from "react"
-import Terrain from "./assets/terrain_demo.png"
+import Terrain from "./assets/beispiel_bild.png"
 import Autumn from './assets/laub_anim/Autumn.png'
 import Spring from './assets/laub_anim/Spring.png'
 import Winter from './assets/laub_anim/Winter.png'
+import Plants from './assets/Plants.png'
+import Rock from './assets/Rock1.png'
 import Summer from './assets/laub_anim/Summer.png'
 import Gras from './assets/terrain/gras.png'
 import Dirt from './assets/terrain/dirt.png'
@@ -61,32 +63,33 @@ export const Background = (props: {column:number}) => {
 
           }
         })
+        
         components.current.forEach((el,idx) => {
-          const image = loadImage(el.value)
-          const x = Math.floor(idx / 100);
-          const y = idx % 100;
-          if(el.type === 'asset'){
-            image.onload = () => {
-
-              context.drawImage(image,  64 * ((props.column+x+y)%21 + 1),0,  64, 64, x *16 , y * 16, 64, 64);
-            }
+          if(el.type === 'asset' && el.value === Rock){
+            render(el.value, context, idx, props.column)
           }
         })
-        context1.putImageData(context.getImageData(0,0,1000,1000), 1000, 1000)
+
+        components.current.forEach((el,idx) => {
+          if(el.type === 'asset' && el.value === Summer){
+            render(el.value, context, idx, props.column)
+          }
+        })
+        context1.putImageData(context.getImageData(0,0,1600,1600), 1600, 1600)
         img.current!.src=canvas.current.toDataURL("image/url")
         img
   }, [props.column, update.current])
 
   return <>
-  <img ref={img} width={1000} height={1000} style={{"position":"relative", left:0, top:0}}/>
+  <img ref={img} width={1000} height={1000} style={{"position":"fixed", left:0, top:0}}/>
   <canvas 
   
   id="1"
-    style={{"width": 1000, "height": 1000, "imageRendering": 'pixelated', display:'none'}}
+    style={{"width": 1600, "height": 1600, "imageRendering": 'pixelated', display:'none'}}
     ref={canvas1}/>
   <canvas 
   id="2"
-    style={{"width": 1000, "height": 1000, "imageRendering": 'pixelated', display:'none'}}
+    style={{"width": 1600, "height": 1600, "imageRendering": 'pixelated', display:'none'}}
     ref={canvas}/>
   </>
 
@@ -97,16 +100,23 @@ function genCoord(pixel: number[]):Component {
   const [r,g,b,a] = pixel;
   const probability = a / 255 * 0.8;
   let asset = '';
-  if (r === 255 && g === 0 && b === 0){
+  if (r === 59 && g === 117 && b === 175){
     //red
-    asset = Winter;
+    console.count("rock")
+    asset = Rock;
   }
-  if (r === 255 && g === 255 && b === 0){
+  if (r === 59 && g === 117 && b === 175){
     //green
+    console.count("summer")
     asset = Summer;
   }
+  if (r === 88 && g === 187 && b === 204){
+    //green
+    console.count("plants")
+    asset = Plants;
+  }
   const randomNumber = Math.random();
-  if (randomNumber  < probability * 0.2) {
+  if (randomNumber  < probability * 0.1) {
       return {type: 'asset', value: asset}; // Draw the image
   } else {
      // Don't draw asset instead draw terrain 
@@ -186,4 +196,20 @@ function loadImage(src: string){
     const tilemapImage = new Image();
     tilemapImage.src = src;
     return tilemapImage;
+}
+function render(img:string, context: CanvasRenderingContext2D, idx:number, frame: number){
+
+    const image = loadImage(img)
+    const x = Math.floor(idx / 100);
+    const y = idx % 100;
+      image.onload = () => {
+        if(img === Summer){
+          context.drawImage(image,  64 * ((frame+x+y)%21 + 1),0,  64, 64, x *16 , y * 16, 64, 64);
+        }else if(img === Rock){
+          context.drawImage(image,  0,0,  128, 128, x *16 , y * 16, 32, 32);
+        }
+        else {
+          context.drawImage(image,  0 ,0,  16, 16, x *16 , y * 16, 16, 16);
+        }
+    }
 }
