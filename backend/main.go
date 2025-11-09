@@ -1,0 +1,144 @@
+package main
+
+import (
+	"log"
+	"net/http"
+	"time"
+	"encoding/json"
+	"strings"
+	"fmt"
+	"io/ioutil"
+	"strconv"
+    "os/exec"
+
+)
+
+type SearchResult struct {
+ Time        time.Time `json:"time"`
+ Description string    `json:"description"`
+ ID          uint64    `json:"id"`
+}
+
+type Data struct {
+    Rows []DataRow `json:"data"`
+}
+type DataRow struct {
+    Id string `json:"id"`
+    Geo Geo `json:"geo"`
+}
+type Geo struct {
+    Geometry Geometry `json:"geometry"`
+}
+type Geometry struct {
+    Value string `json:"value"`
+}
+
+type Point struct {
+  X float64
+  Y float64
+}
+
+
+func (b Point) String() string {
+        return fmt.Sprintf("[%f %f]", b.X, b.Y)
+}
+
+
+func exxtract (leftTop, rightBottom Point){
+println("running extraction with " + leftTop.String() + " "+ rightBottom.String())
+}
+
+func extract(coords []Point) {
+
+    minX := 1.0 * (2^20)
+     maxX := 0.0
+    minY := 1.0 * (2^20) //TODO: large number max float etc
+    maxY := 0.0
+
+    for i := range coords {
+        minX = min(minX, coords[i].X)
+        maxX = max(maxX, coords[i].X)
+        minY = min(minY, coords[i].Y)
+        maxY = max(maxY, coords[i].Y)
+    }
+
+
+    exxtract(Point{
+          X: minX, Y: minY,
+    }, Point{X: maxX, Y: maxY })
+}
+
+
+
+func hello(w http.ResponseWriter, req *http.Request)  {
+    res := SearchResult{
+    }
+    json.NewEncoder(w).Encode(res)
+}
+func findit(w http.ResponseWriter, req *http.Request)  {
+    q := req.URL.Query()
+
+
+      id := q.Get("id")
+
+
+
+     content, err := ioutil.ReadFile("./rows.json")
+        if err != nil {
+            log.Fatal("Error when opening file: ", err)
+        }
+
+        // Now let's unmarshall the data into `payload`
+        var payload Data
+        err = json.Unmarshal(content, &payload)
+        if err != nil {
+            log.Fatal("Error during Unmarshal(): ", err)
+        }
+
+    for i := range payload.Rows {
+        if(strings.Compare(id, payload.Rows[i].Id) == 0 ) {
+        log.Printf("hallo, found something")
+            points := make([]Point, 0)
+            datapoints := strings.Split(payload.Rows[i].Geo.Geometry.Value, " ")
+            for i:=0; i<len(datapoints); i+=2 {
+
+    x, _ := strconv.ParseFloat(datapoints[i], 32)
+
+    y, _ := strconv.ParseFloat(datapoints[i+1], 32)
+
+                points = append(points, Point{
+                    X: x,
+                    Y: y,
+                })
+            }
+        extract(points)
+
+            var res2 = map[string]string {
+                "test": payload.Rows[i].Geo.Geometry.Value,
+            }
+            json.NewEncoder(w).Encode(res2)
+
+            return
+
+        }
+    }
+log.Fatal("entry not found")
+
+    var res = map[string]string {
+    "test":"test",
+    }
+    json.NewEncoder(w).Encode(res)
+}
+
+func main() {
+	fs := http.FileServer(http.Dir("./../src/search/dist"))
+	http.Handle("/", fs)
+	http.HandleFunc("/api/doit", hello)
+	http.HandleFunc("/api/find", findit)
+
+	log.Print("Listening on :3000...")
+	err := http.ListenAndServe(":3000", nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
