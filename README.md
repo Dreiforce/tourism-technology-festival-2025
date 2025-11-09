@@ -60,6 +60,24 @@ This repository contains the source code, documentation, and all relevant materi
    Open the browser and go to `localhost:8080`
 ---
 
+## 🚀 Getting Started
+
+in directory src/search run
+``` 
+npm run build
+```
+
+in directory backend run 
+``` 
+go run main.go
+```
+
+make sure to set the correct OPENEO_CONFIG_HOME in the backend.go file to get sat auth working
+run the processing pipeline manually once to create the auth token file
+```
+python Sentinel_3.py
+```
+
 ## 👥 Contributors
 
 - [Jakob Geringer](https://github.com/KingPao) – AI Expert
