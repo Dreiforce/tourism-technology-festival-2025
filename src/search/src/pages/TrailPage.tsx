@@ -11,10 +11,12 @@ export default function TrailPage() {
     const navigate = useNavigate();
 
     const [trailPath, setTrailPath] = useState<XY[] | null>(null);
+    const [fileNames, setFileNames] = useState<string[] | null>(null);
     const [trailName, setTrailName] = useState<string | null>(null);
     console.log(trailPath)
     useEffect(() => {
         setTrailPath(location.state.trailPath);
+        setFileNames(location.state.fileNames);
         setTrailName(location.state.trailName || "Trail Path");
     }, [location.state]);
 
@@ -28,7 +30,7 @@ export default function TrailPage() {
                 {trailPath && Array.isArray(trailPath) && trailPath.length > 0 ? (
                     <>
                         <div className="mb-6">
-                            <img src='/trail.png' alt='alt'/>
+                            <img src={fileNames[0]} alt='alt'/>
                             {/*<PathCanvas path={trailPath}/>*/}
                             <p className="text-xs text-center mt-1 text-muted-foreground">
                                 Trail

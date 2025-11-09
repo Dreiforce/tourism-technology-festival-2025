@@ -28,8 +28,8 @@ const Index = () => {
     const handleResultClick = async (id: number, title: string) => {
         setLoading(true);
         try {
-            //const response = await fetch(`http://localhost:3000/api/find/?id=${id}`);
-            const response = await fetch('example.json');
+            const response = await fetch(`http://localhost:3000/api/find?id=${id}`);
+            //const response = await fetch('example.json');
             const data = await response.json();
 
             if (data && Array.isArray(data.path)) {
@@ -42,6 +42,7 @@ const Index = () => {
                     navigate(`/trail/${id}`, {
                         state: {
                             trailPath: path,
+                            fileNames: data.files,
                             trailName: title,
                             trees: data.trees,
                             treeColors: data.tree_colors,

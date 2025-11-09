@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"strings"
 	"fmt"
+	"errors"
 	"io"
 	"io/ioutil"
 	"os"
@@ -84,7 +85,18 @@ func generate_svg(target string, width, height int, trees []MyTree) {
 
 }
 
+func Exists(filename string) bool {
+
+	_, error := os.Stat(filename)
+	//return !os.IsNotExist(err)
+	return !errors.Is(error, os.ErrNotExist)
+}
+
 func extract_svg(id, pngfile string) {
+    if Exists(filepath.Join(pngfile, ".svg")) {
+        return
+    }
+
     grepCmd := exec.Command("python", "../pipeline_colors/extract.py",
     pngfile)
   const venv = "../.venv"
@@ -271,6 +283,10 @@ results := make([]string, 0)
 
             var res2 = map[string]any {
                 "files": results,
+                "path": []map[string]float64 {
+                    map[string]float64 {"x": 0.0, "y": 0.0},
+                    map[string]float64 {"x": 0.0, "y": 1.0},
+                },
             }
             json.NewEncoder(w).Encode(res2)
 
