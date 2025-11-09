@@ -12,6 +12,7 @@ import (
 	"os"
 	"strconv"
     "os/exec"
+	"github.com/ajstarks/svgo"
 "path/filepath"
 )
 
@@ -38,6 +39,47 @@ type Geometry struct {
 type Point struct {
   X float64
   Y float64
+}
+
+
+type MyTree struct {
+    X,Y int
+    Hexcolor string
+}
+
+func generate_svg(target string, trees []MyTree) {
+    fileout, err := os.Create(target)
+    if(err != nil) {
+
+            log.Fatalf("svg gen open : %v", err)
+            }
+        defer func() {
+         if err := fileout.Close(); err != nil {
+             panic(err)
+         }
+     }()
+
+
+
+
+	width := 500
+	height := 500
+	canvas := svg.New(fileout)
+	canvas.Start(width, height)
+
+    for i := range trees {
+        t := trees[i]
+        canvas.Translate(t.X, t.Y)
+        canvas.Rect(-10, -10, 20, 20, "color=\"" + t.Hexcolor + "\"")
+        canvas.Rect(0 + 2, -10 , 4, 10, "color=\"#f0f\"")
+        canvas.Gend()
+    }
+
+	canvas.Circle(width/2, height/2, 100)
+
+	canvas.Text(width/2, height/2, "Hello, SVG", "text-anchor:middle;font-size:30px;fill:white")
+	canvas.End()
+
 }
 
 func extract_svg(id, pngfile string) {
@@ -73,6 +115,9 @@ func extract_svg(id, pngfile string) {
     println("output of command" + string(grepBytes))
     println("output of command" + string(grepBytesErr))
 
+    generate_svg(pngfile + ".svg", []MyTree{
+        MyTree{X: 10, Y: 10, Hexcolor: "#ff0"},
+    })
 
 }
 
