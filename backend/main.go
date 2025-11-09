@@ -12,7 +12,7 @@ import (
 	"os"
 	"strconv"
     "os/exec"
-
+"path/filepath"
 )
 
 type SearchResult struct {
@@ -46,17 +46,23 @@ func (b Point) String() string {
 }
 
 
-func Exxtract (leftTop, rightBottom Point){
+func Exxtract (id string, leftTop, rightBottom Point){
 println("running extraction with " + leftTop.String() + " "+ rightBottom.String())
 fmt.Println("Say hi")
 
-    grepCmd := exec.Command("python", "../processing/Sentinel_3.py",
-     fmt.Sprintf("%f", leftTop.X),
-    fmt.Sprintf("%f", rightBottom.X),
-    fmt.Sprintf("%f", leftTop.Y),
-    fmt.Sprintf("%f", rightBottom.Y))
+newpath := filepath.Join(".", "datadir", id, "satellite_images")
+err := os.MkdirAll(newpath, os.ModePerm)
+if err != nil {
+return
+}
+    grepCmd := exec.Command("python", "../../../processing/Sentinel_3.py",
+     fmt.Sprintf("%f", leftTop.Y),
+    fmt.Sprintf("%f", leftTop.X),
+    fmt.Sprintf("%f", rightBottom.Y),
+    fmt.Sprintf("%f", rightBottom.X))
   const venv = "../.venv"
 
+grepCmd.Dir =  filepath.Join(".", "datadir", id)
     grepCmd.Env = append(os.Environ(),
         // these were the only ones i could see changing on 'activation'
         "VIRTUAL_ENV=" + venv,
@@ -85,7 +91,7 @@ fmt.Println("Say hi")
     println("output of command" + string(grepBytesErr))
 }
 
-func extract(coords []Point) {
+func extract(id string, coords []Point) {
 
     minX := 120000.0
      maxX := 0.0
@@ -100,7 +106,7 @@ func extract(coords []Point) {
     }
 
 
-    Exxtract(Point{
+    Exxtract(id, Point{
           X: minX, Y: minY,
     }, Point{X: maxX, Y: maxY })
 }
@@ -148,7 +154,7 @@ func findit(w http.ResponseWriter, req *http.Request)  {
                     Y: y,
                 })
             }
-        extract(points)
+        extract(id, points)
 
             var res2 = map[string]string {
                 "test": payload.Rows[i].Geo.Geometry.Value,
