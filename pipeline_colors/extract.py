@@ -48,14 +48,14 @@ if __name__ == "__main__":
                     trees.append({
                         "x": x,
                         "y": y,
-                        "hexcolor": "#33ff33"
+                        "hexcolor": "#2D5A27"
                     })
             if (0 / 180.0) < h < (30 / 180.0): # red/brown?
                 if random.random() < factor_green * s:
                     trees.append({
                         "x": x,
                         "y": y,
-                        "hexcolor": "#ff6611"
+                        "hexcolor": "#D07A04"
                     })
 
     json_str = json.dumps({

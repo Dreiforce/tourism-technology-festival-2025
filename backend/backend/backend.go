@@ -73,14 +73,14 @@ func generate_svg(target string, width, height int, trees []MyTree) {
         t := trees[i]
         canvas.Translate(t.X, t.Y)
         canvas.Rect(-10, -10, 20, 20, "style=\"fill:" + t.Hexcolor + "\"")
-        canvas.Rect(0 + 2, -10 , 4, 10, "style=\"fill:#f0f\"")
+        canvas.Rect(-2, 10 , 4, 10, "style=\"fill:#654321\"")
         canvas.Gend()
     }
     //canvas.Gend()
     //canvas.Gend()
-	canvas.Circle(width/2, height/2, 100)
+	//canvas.Circle(width/2, height/2, 100)
 
-	canvas.Text(width/2, height/2, "Hello, SVG", "text-anchor:middle;font-size:30px;fill:white")
+	//canvas.Text(width/2, height/2, "Hello, SVG", "text-anchor:middle;font-size:30px;fill:white")
 	canvas.End()
 
 }
@@ -93,7 +93,8 @@ func Exists(filename string) bool {
 }
 
 func extract_svg(id, pngfile string) {
-    if Exists(filepath.Join(pngfile, ".svg")) {
+    if Exists( pngfile + ".svg") {
+    println("file " + pngfile + ".svg already exists" )
         return
     }
 
@@ -126,8 +127,8 @@ func extract_svg(id, pngfile string) {
         }
     }
 
-    println("output of command" + string(grepBytes))
-    println("output of command" + string(grepBytesErr))
+    println("output of command svg" + string(grepBytes))
+    println("output of command svg" + string(grepBytesErr))
 
 
     // decoding country1 struct
@@ -147,6 +148,7 @@ func readdir_ext(id, dir string) {
     items, _ := os.ReadDir(dir)
     for _, item := range items {
     if(!item.IsDir() && strings.HasSuffix(item.Name(), ".png")) {
+        println("found file " + filepath.Join(dir, item.Name()))
         extract_svg(id, filepath.Join(dir, item.Name()))
     }
     }
@@ -268,6 +270,7 @@ func Findit(w http.ResponseWriter, req *http.Request)  {
                 })
             }
         extract(id, points)
+        print("finished extract, running svg")
         result := filepath.Join(".","datadir",id,"satellite_images")
         readdir_ext(id, result)
 
